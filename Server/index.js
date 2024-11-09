@@ -1,0 +1,18 @@
+import { WebSocketServer } from 'ws';
+const wss = new WebSocketServer({"port": 3000});
+
+wss.on('connection', function connection(ws) {
+    console.log("A connection established")
+
+    ws.on('error', console.error);
+    ws.on('open', () => {
+        console.log("Connected!")
+    })
+    ws.on('message', function message(data) {
+        const decoder = new TextDecoder();
+        console.log('received: ', decoder.decode(data));
+    })
+
+    ws.send('something');
+});
+

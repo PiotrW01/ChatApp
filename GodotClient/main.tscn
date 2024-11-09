@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0qfkwbesyuxh"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_x8enw"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_x8enw")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Test" type="Button" parent="CanvasLayer/Control"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -15.5
+offset_right = 70.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "test"
+
+[node name="reconnect" type="Button" parent="CanvasLayer/Control"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -242.0
+offset_top = -15.0
+offset_right = -102.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "reconnect"
+
+[connection signal="button_down" from="CanvasLayer/Control/Test" to="." method="_on_button_down"]
+[connection signal="button_down" from="CanvasLayer/Control/reconnect" to="." method="_on_reconnect_button_down"]
