@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c0qfkwbesyuxh"]
+[gd_scene load_steps=3 format=3 uid="uid://c0qfkwbesyuxh"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_x8enw"]
+[ext_resource type="PackedScene" uid="uid://c4o6lep73cw70" path="res://message.tscn" id="3_ptnma"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_x8enw")
@@ -15,39 +16,103 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Test" type="Button" parent="CanvasLayer/Control"]
-custom_minimum_size = Vector2(140, 0)
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -70.0
-offset_top = -15.5
-offset_right = 70.0
-offset_bottom = 15.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-focus_mode = 0
-text = "test"
+
+[node name="SplitContainer" type="SplitContainer" parent="CanvasLayer/Control/PanelContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer"]
+custom_minimum_size = Vector2(216, 0)
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="UserContainer" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer/ScrollContainer"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer"]
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="MessageContainer" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer/MarginContainer2/ScrollContainer"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+theme_override_constants/separation = 8
+
+[node name="Control" parent="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer/MarginContainer2/ScrollContainer/MessageContainer" instance=ExtResource("3_ptnma")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="TextInput" type="LineEdit" parent="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="reconnect" type="Button" parent="CanvasLayer/Control"]
 custom_minimum_size = Vector2(140, 0)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -242.0
-offset_top = -15.0
-offset_right = -102.0
-offset_bottom = 16.0
+layout_mode = 2
+offset_left = 357.0
+offset_top = 17.0
+offset_right = 497.0
+offset_bottom = 48.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
 text = "reconnect"
 
-[connection signal="button_down" from="CanvasLayer/Control/Test" to="." method="_on_button_down"]
+[node name="Test" type="Button" parent="CanvasLayer/Control"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+offset_left = 541.0
+offset_top = 16.0
+offset_right = 681.0
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "test"
+
+[node name="connect" type="Button" parent="CanvasLayer/Control"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+offset_left = 740.0
+offset_top = 19.0
+offset_right = 880.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "connect"
+
+[connection signal="text_submitted" from="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer/TextInput" to="." method="_on_message_submitted"]
 [connection signal="button_down" from="CanvasLayer/Control/reconnect" to="." method="_on_reconnect_button_down"]
+[connection signal="button_down" from="CanvasLayer/Control/Test" to="." method="_on_button_down"]
+[connection signal="button_down" from="CanvasLayer/Control/connect" to="." method="_on_connect_button_down"]

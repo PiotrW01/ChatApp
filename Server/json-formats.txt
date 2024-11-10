@@ -1,0 +1,28 @@
+///CLIENT MESSAGE TO SERVER///
+{
+    "type": "message",
+    "session_id": "",
+    "message": "",
+}
+///SERVER BROADCAST MESSAGE TO CLIENTS///
+{
+    "type": "message",
+    "username": "",
+    "message": "",
+}
+///SERVER INITIALIZE CLIENT///
+{
+    "type": "initialize",
+    "session_id": "",
+    "users": [],
+}
+///SERVER BROADCAST NEW USER CONNECT///
+{
+    "type": "user_connected",
+    "session_id": "",
+}
+///SERVER BROADCAST USER DISCONNECT///
+{
+    "type": "user_disconnected",
+    "session_id": "",
+}

@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbhmnyinmjld3"]
+
+[ext_resource type="Script" path="res://displayed_user.gd" id="1_slhqd"]
+
+[node name="Control" type="PanelContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 40)
+offset_right = 222.0
+offset_bottom = 34.0
+size_flags_horizontal = 0
+script = ExtResource("1_slhqd")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+clip_contents = true
+layout_mode = 2
+
+[node name="NameLabel" type="RichTextLabel" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "user"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
