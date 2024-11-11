@@ -8,6 +8,7 @@ const URL = "ws://localhost:3000"
 var json = JSON.new()
 
 var session_id = ""
+var username = ""
 
 @onready var user_container = %UserContainer
 @onready var message_container = %MessageContainer
@@ -21,29 +22,31 @@ func _process(delta):
 	var state = socket.get_ready_state()
 	if state == WebSocketPeer.STATE_OPEN:
 		while socket.get_available_packet_count():
-			
 			var packet = socket.get_packet().get_string_from_ascii()
 			var result = json.parse(packet)
 			if result == OK:
 				var data = json.data
-				match data.type:
-					"message":
+				match data.type as DataType:
+					DataType.MESSAGE:
 						var message = messageScene.instantiate()
 						message.username = str(data.username)
 						message.text = str(data.message)
 						message_container.add_child(message)
 						if message_container.get_child_count() > 100:
 							message_container.get_child(0).queue_free()
-					"initialize":
+					DataType.LOGIN:
+						$CanvasLayer/Control/LineEdit.editable = false
+						$CanvasLayer/Control/login.disabled = true;
+						
 						session_id = data.session_id
 						print("id assigned: ", session_id)
 						for username in data.users:
 							add_user_to_list(username)
-					"user_connected":
-						add_user_to_list(str(data.session_id))
-					"user_disconnected":
-						remove_user_from_list(str(data.session_id))
-						
+					DataType.USER_CONNECTED:
+						if data.username != username:
+							add_user_to_list(str(data.username))
+					DataType.USER_DISCONNECTED:
+						remove_user_from_list(str(data.username))
 					_:
 						push_warning("Received invalid data type: ", data.type)
 						
@@ -67,18 +70,10 @@ func _on_button_down():
 	socket.put_packet(array)
 	#socket.send_text("message 9423")
 
-
-func _on_reconnect_button_down():
-	socket.close()
-	for child in user_container.get_children():
-		child.queue_free()
-	for message in message_container.get_children():
-		message.queue_free()
-
 func _on_message_submitted(text):
 	text_input.text = ""
 	var packet = {
-		"type": "message",
+		"type": DataType.MESSAGE,
 		"session_id": session_id,
 		"message": text,
 	}
@@ -105,5 +100,32 @@ func remove_user_from_list(username):
 		if child.name == username:
 			child.queue_free()
 	
-	
-	
+
+
+func _on_login_button_down():
+	username = $CanvasLayer/Control/LineEdit.text
+	$CanvasLayer/Control/LineEdit.text = ""
+	var packet = {
+		"type": DataType.LOGIN,
+		"username": username,
+	}
+	socket.send_text(JSON.stringify(packet))
+
+
+enum DataType{
+	INIT,
+	MESSAGE,
+	LOGIN,
+	USER_CONNECTED,
+	USER_DISCONNECTED,
+}
+
+
+func _on_disconnect_button_down():
+	socket.close()
+	for child in user_container.get_children():
+		child.queue_free()
+	for message in message_container.get_children():
+		message.queue_free()
+	$CanvasLayer/Control/LineEdit.editable = true
+	$CanvasLayer/Control/login.disabled = false;

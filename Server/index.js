@@ -1,14 +1,12 @@
-//const express = require('express');
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import express from 'express';
+import { makeid, DataType } from './utils.js';
 
 const app = express()
 const server = createServer(app)
-const wss = new WebSocketServer({"server": server,});
-
-const connectedUsers = [];
-const usersHash = {};
+const wss = new WebSocketServer({"server": server});
+const usersMap = new Map();
 
 wss.on('connection', function connection(ws, req) {
     ws.on('error', console.error);
@@ -16,31 +14,30 @@ wss.on('connection', function connection(ws, req) {
         const decoder = new TextDecoder();
         data = JSON.parse(decoder.decode(data));
         switch(data.type){
-            case "message":
-                broadcast_message(data.session_id, data.message);
+            case DataType.MESSAGE:
+                if(verifyUserID(ws, data.session_id));
+                broadcastMessage(usersMap.get(ws).username, data.message);
+                break;
+            case DataType.LOGIN:
+                connectToChat(ws, data);
                 break;
             default:
                 console.log("Received data with wrong type: ", data.type);
+                ws.send("error");
                 break;
         }
-    })
+    });
     ws.on('close', (code, reason) => {
-        broadcast_user_disconnected(usersHash[ws]);
-        const index = connectedUsers.indexOf(usersHash[ws]);
-        if(index > -1) {
-            connectedUsers.splice(index, 1);
+        if(usersMap.has(ws)){
+            broadcastUserDisconnected(usersMap.get(ws).username);
         }
+        usersMap.delete(ws);
     });
 
-    initialize_client(ws);
 });
 
-app.get('/', (req,res) => {
-    res.send("aaa");
-})
-
-
-server.listen(3000);
+server.listen(3000, () => { 
+});
 
 /*
 setTimeout(function messageClients() {
@@ -56,55 +53,67 @@ setTimeout(function messageClients() {
     setTimeout(messageClients, 1000);
 }, 1000); */
 
-
-function makeid(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
-}
-
-function broadcast_message(username, message){
-    const obj = {
-        "type": "message",
+function broadcastMessage(username, message){
+    const res = {
+        "type": DataType.MESSAGE,
         "username": username,
         "message": message,
     }
-    const str = JSON.stringify(obj);
-    wss.clients.forEach(ws => {
-        ws.send(str)
+    const str = JSON.stringify(res);
+    usersMap.forEach((_, ws) => {
+        ws.send(str);
     })
 }
 
-function broadcast_user_connected(id){
-    const str = JSON.stringify({"type": "user_connected", "session_id": id});
+function broadcastUserConnected(username){
+    const res = {"type": DataType.USER_CONNECTED, "username": username};
     wss.clients.forEach(ws => {
-        ws.send(str);
+        ws.send(JSON.stringify(res));
     });
 }
 
-function broadcast_user_disconnected(id){
-    const str = JSON.stringify({"type": "user_disconnected", "session_id": id});
+function broadcastUserDisconnected(username){
+    const res = {"type": DataType.USER_DISCONNECTED, "username": username};
     wss.clients.forEach(ws => {
-        ws.send(str);
+        ws.send(JSON.stringify(res));
     });
 }
 
-
-function initialize_client(ws){
-    const id = makeid(8);
-    const obj = {
-        "type": "initialize",
-        "session_id": id,
-        "users": connectedUsers,
+function connectToChat(ws, data){
+    for (const user of usersMap.values()) {
+        if(user.username == data.username){
+            console.log("Username taken!");
+            return;
+        }
     }
-    ws.send(JSON.stringify(obj));
-    connectedUsers.push(id);
-    usersHash[ws] = id;
-    broadcast_user_connected(id);
+    const id = makeid(12);
+    usersMap.set(ws, {"session_id": id, "username": data.username,});
+
+    const users = [];
+    usersMap.forEach((user) => {
+        users.push(user.username);
+    });
+
+    const res = {"type": DataType.LOGIN, "session_id": id, "users": users};
+    ws.send(JSON.stringify(res));
+
+    broadcastUserConnected(data.username);
 }
+
+function verifyUserID(ws, session_id){
+    const user = usersMap.get(ws);
+    if(session_id != user.session_id){
+        console.log("id's don't match!");
+        return false;
+    }
+    return true;
+}
+
+function shutdownServer() {
+    wss.clients.forEach(client => client.close());
+    wss.close(() => {
+        server.close();
+    });
+}
+
+export { wss, usersMap, shutdownServer}

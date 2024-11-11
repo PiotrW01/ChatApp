@@ -76,7 +76,7 @@ size_flags_horizontal = 1
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="reconnect" type="Button" parent="CanvasLayer/Control"]
+[node name="disconnect" type="Button" parent="CanvasLayer/Control"]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 offset_left = 357.0
@@ -86,9 +86,9 @@ offset_bottom = 48.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-text = "reconnect"
+text = "disconnect"
 
-[node name="Test" type="Button" parent="CanvasLayer/Control"]
+[node name="login" type="Button" parent="CanvasLayer/Control"]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 offset_left = 541.0
@@ -98,7 +98,7 @@ offset_bottom = 47.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-text = "test"
+text = "login"
 
 [node name="connect" type="Button" parent="CanvasLayer/Control"]
 custom_minimum_size = Vector2(140, 0)
@@ -112,7 +112,15 @@ grow_vertical = 2
 focus_mode = 0
 text = "connect"
 
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 541.0
+offset_top = 67.0
+offset_right = 681.0
+offset_bottom = 98.0
+placeholder_text = "username"
+
 [connection signal="text_submitted" from="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer/TextInput" to="." method="_on_message_submitted"]
-[connection signal="button_down" from="CanvasLayer/Control/reconnect" to="." method="_on_reconnect_button_down"]
-[connection signal="button_down" from="CanvasLayer/Control/Test" to="." method="_on_button_down"]
+[connection signal="button_down" from="CanvasLayer/Control/disconnect" to="." method="_on_disconnect_button_down"]
+[connection signal="button_down" from="CanvasLayer/Control/login" to="." method="_on_login_button_down"]
 [connection signal="button_down" from="CanvasLayer/Control/connect" to="." method="_on_connect_button_down"]
