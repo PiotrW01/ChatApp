@@ -120,6 +120,14 @@ offset_right = 681.0
 offset_bottom = 98.0
 placeholder_text = "username"
 
+[node name="LineEdit2" type="LineEdit" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 740.0
+offset_top = 67.0
+offset_right = 880.0
+offset_bottom = 98.0
+placeholder_text = "server IP"
+
 [connection signal="text_submitted" from="CanvasLayer/Control/PanelContainer/SplitContainer/VBoxContainer/TextInput" to="." method="_on_message_submitted"]
 [connection signal="button_down" from="CanvasLayer/Control/disconnect" to="." method="_on_disconnect_button_down"]
 [connection signal="button_down" from="CanvasLayer/Control/login" to="." method="_on_login_button_down"]

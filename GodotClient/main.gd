@@ -4,7 +4,7 @@ var messageScene = preload("res://message.tscn")
 var displayedUserScene = preload("res://displayed_user.tscn")
 
 var socket = WebSocketPeer.new()
-const URL = "ws://localhost:3000"
+var URL = "wss://"
 var json = JSON.new()
 
 var session_id = ""
@@ -15,6 +15,7 @@ var username = ""
 @onready var text_input = %TextInput
 
 func _ready():
+	socket.handshake_headers = ['user-agent: Mozilla']
 	set_process(false)
 
 func _process(delta):
@@ -85,6 +86,8 @@ func _on_connect_button_down():
 	print(socket.get_ready_state())
 	if socket.get_ready_state() != WebSocketPeer.STATE_CLOSED:
 		return
+	URL += $CanvasLayer/Control/LineEdit2.text
+	$CanvasLayer/Control/LineEdit2.text = ""
 	socket.connect_to_url(URL)
 	set_process(true)
 
