@@ -11,6 +11,16 @@ func _ready():
 	_reset_buttons()
 	Client.INSTANCE.disconnected.connect(_on_disconnect_button_down)
 	Client.INSTANCE.logged_in.connect(_on_logged_in)
+	ip_input.call_deferred("grab_focus")
+
+func _input(event):
+	if Input.is_action_just_pressed("ui_text_submit"):
+		if $ConnectionInput.visible:
+			_on_connect_button_down()
+		elif $LoginInput.visible:
+			_on_login_button_down()
+
+
 
 func _on_disconnect_button_down():
 	Client.INSTANCE.socket.close()
@@ -20,10 +30,11 @@ func _on_disconnect_button_down():
 
 
 func _on_login_button_down():
-	Client.INSTANCE.username = username_input.text
-	username_input.text = ""
-	if Client.INSTANCE.username == "":
+	var username = username_input.text.strip_edges()
+	if not _is_username_valid(username):
 		return
+	Client.INSTANCE.username = username
+	username_input.text = ""
 	var packet = {
 		"type": Client.INSTANCE.DataType.LOGIN,
 		"username": Client.INSTANCE.username,
@@ -56,6 +67,7 @@ func _on_connect_button_down():
 			$LoginInput.visible = true
 			login.disabled = false
 			username_input.editable = true
+			username_input.call_deferred("grab_focus")
 			return
 		if Time.get_ticks_msec() - start_time > 5000:
 			_reset_buttons()
@@ -85,3 +97,18 @@ func _clear_messages():
 func _clear_users():
 	for child in Client.INSTANCE.user_container.get_children():
 		child.queue_free()
+
+func _is_username_valid(username):
+	username = username.strip_edges()
+	var ascii_username = username.to_lower().to_ascii_buffer()
+	if username.length() < 4:
+		push_warning("Username too short.")
+		return false
+	if username.length() > 16:
+		push_warning("Username too long.")
+		return false
+	for char in ascii_username:
+		if char < 97 or char > 122:
+			push_warning("Username contains spaces or invalid characters.")
+			return false
+	return true

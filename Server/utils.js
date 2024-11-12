@@ -1,13 +1,15 @@
-export function makeid(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
+export function isUsernameValid(username){
+  if (username.length < 4 || username.length > 16){
+    return false;
+  }
+  username = username.trim();
+  username = username.toLowerCase();
+  for (let i = 0; i < username.length; i++) {
+    if(username.charCodeAt(i) < 97 || username.charCodeAt(i) > 122){
+      return false;
     }
-    return result;
+  }
+  return true;
 }
 
 export class DataType {
