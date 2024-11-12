@@ -47,6 +47,7 @@ func _on_connect_button_down():
 	ip_input.editable = false
 	connect.disabled = true
 	
+	var start_time = Time.get_ticks_msec()
 	while(true):
 		await get_tree().process_frame
 		if Client.INSTANCE.socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
@@ -55,6 +56,9 @@ func _on_connect_button_down():
 			$LoginInput.visible = true
 			login.disabled = false
 			username_input.editable = true
+			return
+		if Time.get_ticks_msec() - start_time > 5000:
+			_reset_buttons()
 			return
 
 
