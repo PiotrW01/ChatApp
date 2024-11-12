@@ -1,21 +1,39 @@
+class_name Client
 extends Node2D
 
 var messageScene = preload("res://message.tscn")
 var displayedUserScene = preload("res://displayed_user.tscn")
 
 var socket = WebSocketPeer.new()
-var URL = "wss://"
 var json = JSON.new()
 
 var session_id = ""
 var username = ""
+static var INSTANCE
 
-@onready var user_container = %UserContainer
-@onready var message_container = %MessageContainer
-@onready var text_input = %TextInput
+@export var user_container: VBoxContainer
+@export var message_container: VBoxContainer
+@export var text_input: LineEdit
+@export var scroll_msg_container: ScrollContainer
+
+enum DataType{
+	INIT,
+	MESSAGE,
+	LOGIN,
+	USER_CONNECTED,
+	USER_DISCONNECTED,
+}
+
+
+signal logged_in
+signal disconnected
+
+func _init():
+	if INSTANCE == null:
+		INSTANCE = self
 
 func _ready():
-	socket.handshake_headers = ['user-agent: Mozilla']
+	#socket.handshake_headers = ['user-agent: Mozilla']
 	set_process(false)
 
 func _process(delta):
@@ -27,49 +45,17 @@ func _process(delta):
 			var result = json.parse(packet)
 			if result == OK:
 				var data = json.data
-				match data.type as DataType:
-					DataType.MESSAGE:
-						var message = messageScene.instantiate()
-						message.username = str(data.username)
-						message.text = str(data.message)
-						message_container.add_child(message)
-						if message_container.get_child_count() > 100:
-							message_container.get_child(0).queue_free()
-					DataType.LOGIN:
-						$CanvasLayer/Control/LineEdit.editable = false
-						$CanvasLayer/Control/login.disabled = true;
-						
-						session_id = data.session_id
-						print("id assigned: ", session_id)
-						for username in data.users:
-							add_user_to_list(username)
-					DataType.USER_CONNECTED:
-						if data.username != username:
-							add_user_to_list(str(data.username))
-					DataType.USER_DISCONNECTED:
-						remove_user_from_list(str(data.username))
-					_:
-						push_warning("Received invalid data type: ", data.type)
-						
+				_on_data_received(data)
 			else:
-				print(packet)
-			
+				print("Could not parse data packet:", packet)
 	elif state == WebSocketPeer.STATE_CLOSING:
 		pass
 	elif state == WebSocketPeer.STATE_CLOSED:
 		var code = socket.get_close_code()
 		var reason = socket.get_close_reason()
 		print("Websocket closed with code: %d, reason: %s" % [code, reason])
+		emit_signal("disconnected")
 		set_process(false)
-
-
-func _on_button_down():
-	var array = PackedByteArray()
-	var val = 0x89
-	array.append(val)
-	array.append(0x00)
-	socket.put_packet(array)
-	#socket.send_text("message 9423")
 
 func _on_message_submitted(text):
 	text_input.text = ""
@@ -81,16 +67,20 @@ func _on_message_submitted(text):
 	socket.send_text(JSON.stringify(packet))
 	
 
-
-func _on_connect_button_down():
-	print(socket.get_ready_state())
-	if socket.get_ready_state() != WebSocketPeer.STATE_CLOSED:
-		return
-	URL += $CanvasLayer/Control/LineEdit2.text
-	$CanvasLayer/Control/LineEdit2.text = ""
-	socket.connect_to_url(URL)
-	set_process(true)
-
+func _on_data_received(data):
+	match data.type as DataType:
+		DataType.MESSAGE:
+			_resolve_message(data)
+		DataType.LOGIN:
+			_resolve_login(data)
+		DataType.USER_CONNECTED:
+			if data.username != username:
+				add_user_to_list(str(data.username))
+		DataType.USER_DISCONNECTED:
+			remove_user_from_list(str(data.username))
+		_:
+			push_warning("Received invalid data type: ", data.type)
+			
 
 func add_user_to_list(username):
 	var new_user = displayedUserScene.instantiate()
@@ -103,32 +93,19 @@ func remove_user_from_list(username):
 		if child.name == username:
 			child.queue_free()
 	
-
-
-func _on_login_button_down():
-	username = $CanvasLayer/Control/LineEdit.text
-	$CanvasLayer/Control/LineEdit.text = ""
-	var packet = {
-		"type": DataType.LOGIN,
-		"username": username,
-	}
-	socket.send_text(JSON.stringify(packet))
-
-
-enum DataType{
-	INIT,
-	MESSAGE,
-	LOGIN,
-	USER_CONNECTED,
-	USER_DISCONNECTED,
-}
-
-
-func _on_disconnect_button_down():
-	socket.close()
-	for child in user_container.get_children():
-		child.queue_free()
-	for message in message_container.get_children():
-		message.queue_free()
-	$CanvasLayer/Control/LineEdit.editable = true
-	$CanvasLayer/Control/login.disabled = false;
+func _resolve_message(data):
+	var message = messageScene.instantiate()
+	message.username = str(data.username)
+	message.text = str(data.message)
+	message_container.add_child(message)
+	if message_container.get_child_count() > 50:
+		message_container.get_child(0).queue_free()
+	await scroll_msg_container.get_v_scroll_bar().changed
+	scroll_msg_container.scroll_vertical = scroll_msg_container.get_v_scroll_bar().max_value
+	
+func _resolve_login(data):
+	session_id = data.session_id
+	print("id assigned: ", session_id)
+	for username in data.users:
+		add_user_to_list(username)
+	emit_signal("logged_in")
