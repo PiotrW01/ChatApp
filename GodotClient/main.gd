@@ -33,7 +33,7 @@ func _init():
 		INSTANCE = self
 
 func _ready():
-	#socket.handshake_headers = ['user-agent: Mozilla']
+	socket.handshake_headers = ['user-agent: Mozilla']
 	set_process(false)
 
 func _process(delta):
