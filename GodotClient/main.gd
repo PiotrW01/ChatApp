@@ -73,7 +73,7 @@ func _on_message_submitted(text):
 func _on_data_received(data):
 	match data.type as DataType:
 		DataType.MESSAGE:
-			_resolve_message(data)
+			_add_message(data)
 		DataType.LOGIN:
 			_resolve_login(data)
 		DataType.USER_CONNECTED:
@@ -97,7 +97,7 @@ func remove_user_from_list(username):
 		if child.name == username:
 			child.queue_free()
 	
-func _resolve_message(data):
+func _add_message(data):
 	var message = messageScene.instantiate()
 	message.username = str(data.username)
 	message.text = str(data.message)
@@ -112,4 +112,6 @@ func _resolve_login(data):
 	print("id assigned: ", session_id)
 	for username in data.users:
 		add_user_to_list(username)
+	for message in data.messages:
+		_add_message(message)
 	emit_signal("logged_in")

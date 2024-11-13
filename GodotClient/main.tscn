@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://c0qfkwbesyuxh"]
+[gd_scene load_steps=5 format=3 uid="uid://c0qfkwbesyuxh"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_x8enw"]
 [ext_resource type="Script" path="res://buttons_connection.gd" id="2_4m1ns"]
+[ext_resource type="Script" path="res://emoji_list.gd" id="2_xnaxa"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jsms6"]
 
@@ -90,6 +91,21 @@ theme_override_constants/separation = 8
 
 [node name="TextInput" type="LineEdit" parent="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer2/VBoxContainer"]
 layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer2/VBoxContainer/TextInput"]
+layout_mode = 0
+offset_top = -222.0
+offset_right = 904.0
+offset_bottom = -2.0
+horizontal_scroll_mode = 0
+
+[node name="EmojiList" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer2/VBoxContainer/TextInput/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+alignment = 2
+script = ExtResource("2_xnaxa")
 
 [node name="Control2" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -186,6 +202,7 @@ grow_vertical = 0
 focus_mode = 0
 text = "disconnect"
 
+[connection signal="text_changed" from="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer2/VBoxContainer/TextInput" to="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer2/VBoxContainer/TextInput/ScrollContainer/EmojiList" method="_on_input_text_changed"]
 [connection signal="text_submitted" from="CanvasLayer/Control/PanelContainer/SplitContainer/MarginContainer2/VBoxContainer/TextInput" to="." method="_on_message_submitted"]
 [connection signal="button_down" from="CanvasLayer/Control2/ConnectionInput/connect" to="CanvasLayer/Control2" method="_on_connect_button_down"]
 [connection signal="button_down" from="CanvasLayer/Control2/LoginInput/login" to="CanvasLayer/Control2" method="_on_login_button_down"]

@@ -1,14 +1,14 @@
 class_name Emoji
 extends Resource
 
-static var emoji = {
+static var emojis = {
 	"godot": preload("res://emojis/icon.svg"),
 	"shinobu": preload("res://emojis/shinobu.gif"),
 	"sus": preload("res://emojis/sus.webp")
 }
 
 static func get_image(name: String):
-	return emoji.get(name)
+	return emojis.get(name)
 
 static func exists(name: String):
-	return emoji.has(name)
+	return emojis.has(name)
