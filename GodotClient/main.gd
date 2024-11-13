@@ -41,7 +41,7 @@ func _process(delta):
 	var state = socket.get_ready_state()
 	if state == WebSocketPeer.STATE_OPEN:
 		while socket.get_available_packet_count():
-			var packet = socket.get_packet().get_string_from_ascii()
+			var packet = socket.get_packet().get_string_from_utf8()
 			var result = json.parse(packet)
 			if result == OK:
 				var data = json.data
@@ -59,6 +59,9 @@ func _process(delta):
 
 func _on_message_submitted(text):
 	text_input.text = ""
+	if socket.get_ready_state() != WebSocketPeer.STATE_OPEN:
+		return
+	
 	var packet = {
 		"type": DataType.MESSAGE,
 		"session_id": session_id,
@@ -84,6 +87,7 @@ func _on_data_received(data):
 
 func add_user_to_list(username):
 	var new_user = displayedUserScene.instantiate()
+	username[0] = username[0].to_upper()
 	new_user.username = str(username)
 	new_user.name = str(username)
 	user_container.add_child(new_user)

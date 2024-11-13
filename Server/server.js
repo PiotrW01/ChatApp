@@ -18,6 +18,11 @@ setTimeout(function messageClients() {
     setTimeout(messageClients, 1000);
 }, 1000); */
 
+const usersMap = new Map();
+const app = express()
+const server = createServer(app)
+const wss = new WebSocketServer({"server": server});
+
 function broadcastMessage(username, message){
     const res = {
         "type": DataType.MESSAGE,
@@ -88,10 +93,7 @@ function shutdownServer() {
 }
 
 function runServer(){
-    const app = express()
-    const server = createServer(app)
-    const wss = new WebSocketServer({"server": server});
-    const usersMap = new Map();
+
 
     wss.on('connection', function connection(ws, req) {
         ws.on('error', console.error);
@@ -101,6 +103,7 @@ function runServer(){
             switch(data.type){
                 case DataType.MESSAGE:
                     if(verifyUserID(ws, data.session_id));
+                    console.log(data.message);
                     broadcastMessage(usersMap.get(ws).username, data.message);
                     break;
                 case DataType.LOGIN:

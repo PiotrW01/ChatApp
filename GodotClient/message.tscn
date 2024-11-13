@@ -12,21 +12,40 @@ script = ExtResource("1_6d7lo")
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/CenterContainer"]
 layout_mode = 2
 
-[node name="Username" type="RichTextLabel" parent="MarginContainer/HBoxContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/CenterContainer/HBoxContainer"]
 layout_mode = 2
-text = "User:"
+
+[node name="Username" type="RichTextLabel" parent="MarginContainer/CenterContainer/HBoxContainer/CenterContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+bbcode_enabled = true
+text = "[b]User:[/b]"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="Message" type="RichTextLabel" parent="MarginContainer/HBoxContainer"]
+[node name="CenterContainer2" type="CenterContainer" parent="MarginContainer/CenterContainer/HBoxContainer"]
 layout_mode = 2
-text = "xdawwdawd"
+
+[node name="Message" type="RichTextLabel" parent="MarginContainer/CenterContainer/HBoxContainer/CenterContainer2"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+focus_mode = 2
+text = "abcrfgvr"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
+selection_enabled = true

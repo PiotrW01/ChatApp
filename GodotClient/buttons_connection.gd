@@ -11,16 +11,22 @@ func _ready():
 	_reset_buttons()
 	Client.INSTANCE.disconnected.connect(_on_disconnect_button_down)
 	Client.INSTANCE.logged_in.connect(_on_logged_in)
-	ip_input.call_deferred("grab_focus")
 
 func _input(event):
 	if Input.is_action_just_pressed("ui_text_submit"):
-		if $ConnectionInput.visible:
+		if $ConnectionInput.visible and ip_input.has_focus():
 			_on_connect_button_down()
-		elif $LoginInput.visible:
+		elif $LoginInput.visible and username_input.has_focus():
 			_on_login_button_down()
-
-
+	elif event is InputEventMouseButton and event.pressed:
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused and focused is Control:
+			if not focused.get_global_rect().has_point(get_viewport().get_mouse_position()):
+				focused.release_focus()
+	elif event is InputEventKey and event.pressed:
+		var focused = get_viewport().gui_get_focus_owner()
+		if not focused:
+			Client.INSTANCE.text_input.grab_focus()
 
 func _on_disconnect_button_down():
 	Client.INSTANCE.socket.close()
@@ -87,6 +93,7 @@ func _reset_buttons():
 	$ConnectionInput.visible = true
 	connect.disabled = false
 	ip_input.editable = true
+	ip_input.call_deferred("grab_focus")
 
 
 func _clear_messages():

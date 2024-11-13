@@ -1,0 +1,14 @@
+[remap]
+
+importer="import_gif_to_animated_texture"
+type="AnimatedTexture"
+uid="uid://dynbd7v1p2obj"
+path="res://.godot/imported/shinobu.gif-9dcb2556bc70150794dd2c839aa2aa49.tres"
+
+[deps]
+
+source_file="res://emojis/shinobu.gif"
+dest_files=["res://.godot/imported/shinobu.gif-9dcb2556bc70150794dd2c839aa2aa49.tres"]
+
+[params]
+
