@@ -57,6 +57,7 @@ func _on_connect_button_down():
 	if ip.ends_with("localhost") or ip == "":
 		URL = "ws://localhost:3000"
 	else:
+		ip = ip.trim_prefix("https://").trim_prefix("http://").trim_prefix("www.")
 		URL = "wss://" + ip
 	Client.INSTANCE.socket.connect_to_url(URL)
 	Client.INSTANCE.set_process(true)
