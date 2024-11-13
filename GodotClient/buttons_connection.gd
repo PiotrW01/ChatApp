@@ -76,6 +76,7 @@ func _on_connect_button_down():
 			username_input.call_deferred("grab_focus")
 			return
 		if Time.get_ticks_msec() - start_time > 5000:
+			Client.INSTANCE.socket.close()
 			_reset_buttons()
 			return
 
