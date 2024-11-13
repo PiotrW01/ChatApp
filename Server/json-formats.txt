@@ -40,5 +40,6 @@
 {
     "type": LOGIN,
     "session_id": id,
-    "users": []
+    "users": [],
+    "messages", [{username,message}],
 }

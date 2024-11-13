@@ -19,6 +19,7 @@ setTimeout(function messageClients() {
 }, 1000); */
 
 const usersMap = new Map();
+const lastMessages = []
 const app = express()
 const server = createServer(app)
 const wss = new WebSocketServer({"server": server});
@@ -28,6 +29,10 @@ function broadcastMessage(username, message){
         "type": DataType.MESSAGE,
         "username": username,
         "message": message,
+    }
+    lastMessages.push({ "username": username, "message": message});
+    if(lastMessages.length > 50){
+        lastMessages.shift();
     }
     const str = JSON.stringify(res);
     usersMap.forEach((_, ws) => {
@@ -69,7 +74,12 @@ function connectToChat(ws, data){
         users.push(user.username);
     });
 
-    const res = {"type": DataType.LOGIN, "session_id": id, "users": users};
+    const res = {
+        "type": DataType.LOGIN, 
+        "session_id": id, 
+        "users": users, 
+        "messages": lastMessages,
+    };
     ws.send(JSON.stringify(res));
 
     console.log("Connected new user with id: ", id)
@@ -103,7 +113,6 @@ function runServer(){
             switch(data.type){
                 case DataType.MESSAGE:
                     if(verifyUserID(ws, data.session_id));
-                    console.log(data.message);
                     broadcastMessage(usersMap.get(ws).username, data.message);
                     break;
                 case DataType.LOGIN:
@@ -117,11 +126,11 @@ function runServer(){
         });
         ws.on('close', (code, reason) => {
             if(usersMap.has(ws)){
+                console.log("Disconnected user ", code);
                 broadcastUserDisconnected(usersMap.get(ws).username);
             }
             usersMap.delete(ws);
         });
-
     });
     
     server.listen(3000, () => {
