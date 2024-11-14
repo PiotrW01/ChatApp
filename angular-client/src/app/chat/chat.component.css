@@ -1,0 +1,7 @@
+.chat{
+    width: 800px;
+    height: 600px;
+    background-color: #1F1F1F;
+    display: flex;
+    justify-self: center;
+}
