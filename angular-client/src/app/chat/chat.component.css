@@ -1,7 +1,33 @@
-.chat{
-    width: 800px;
-    height: 600px;
-    background-color: #1F1F1F;
+.chat-window {
+    width: 300px;
+    height: 400px;
+    border: 1px solid #ddd;
     display: flex;
-    justify-self: center;
-}
+    flex-direction: column;
+  }
+  
+  .chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .chat-message {
+    margin-bottom: 10px;
+  }
+  
+  .chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    padding: 5px;
+  }
+  
+  .chat-input button {
+    padding: 5px 10px;
+    margin-left: 5px;
+  }
