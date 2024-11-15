@@ -6,6 +6,7 @@ var displayedUserScene = preload("res://displayed_user.tscn")
 
 var socket = WebSocketPeer.new()
 var json = JSON.new()
+var userNodes = {}
 
 var session_id = ""
 var username = ""
@@ -86,16 +87,18 @@ func _on_data_received(data):
 			
 
 func add_user_to_list(username):
+	if userNodes.has(username):
+		return
 	var new_user = displayedUserScene.instantiate()
-	username[0] = username[0].to_upper()
 	new_user.username = str(username)
 	new_user.name = str(username)
 	user_container.add_child(new_user)
+	userNodes[username] = new_user
 
 func remove_user_from_list(username):
-	for child in user_container.get_children():
-		if child.name == username:
-			child.queue_free()
+	if userNodes.has(username):
+		userNodes.get(username).queue_free()
+		userNodes.erase(username)
 	
 func _add_message(data):
 	var message = messageScene.instantiate()
@@ -115,3 +118,13 @@ func _resolve_login(data):
 	for message in data.messages:
 		_add_message(message)
 	emit_signal("logged_in")
+
+func clear_messages():
+	for message in Client.INSTANCE.message_container.get_children():
+		message.queue_free()
+
+
+func clear_users():
+	for child in Client.INSTANCE.user_container.get_children():
+		child.queue_free()
+		userNodes.clear()

@@ -30,8 +30,8 @@ func _input(event):
 
 func _on_disconnect_button_down():
 	Client.INSTANCE.socket.close()
-	_clear_messages()
-	_clear_users()
+	Client.INSTANCE.clear_messages()
+	Client.INSTANCE.clear_users()
 	_reset_buttons()
 
 
@@ -96,16 +96,6 @@ func _reset_buttons():
 	connect.disabled = false
 	ip_input.editable = true
 	ip_input.call_deferred("grab_focus")
-
-
-func _clear_messages():
-	for message in Client.INSTANCE.message_container.get_children():
-		message.queue_free()
-
-
-func _clear_users():
-	for child in Client.INSTANCE.user_container.get_children():
-		child.queue_free()
 
 func _is_username_valid(username):
 	username = username.strip_edges()
