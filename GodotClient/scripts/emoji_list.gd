@@ -22,7 +22,7 @@ func _on_input_text_changed(new_text: String):
 		emoji_name = emoji_name.lstrip(":")
 		for emoji: String in Emoji.emojis.keys():
 			if emoji.begins_with(emoji_name) or emoji_name == "":
-				var msg = Client.INSTANCE.messageScene.instantiate()
+				var msg = MainPanel.messageScene.instantiate()
 				msg.username = emoji
 				msg.text = ":" + emoji + ":"
 				add_child(msg)

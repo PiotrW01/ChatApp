@@ -5,8 +5,12 @@
 [ext_resource type="PackedScene" uid="uid://cqjcqol8occ8x" path="res://components/main_panel.tscn" id="3_f83o4"]
 [ext_resource type="PackedScene" uid="uid://crhl0hk4nyogq" path="res://components/authorization_input.tscn" id="4_jou3v"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("user_container", "message_container", "text_input", "scroll_msg_container")]
 script = ExtResource("1_x8enw")
+user_container = NodePath("")
+message_container = NodePath("")
+text_input = NodePath("")
+scroll_msg_container = NodePath("")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -31,7 +35,7 @@ grow_vertical = 2
 layout_mode = 2
 dragger_visibility = 1
 
-[node name="SidePanel" parent="CanvasLayer/Control/MainContainer/SplitContainer" instance=ExtResource("2_ypsog")]
+[node name="PanelContainer" parent="CanvasLayer/Control/MainContainer/SplitContainer" instance=ExtResource("2_ypsog")]
 layout_mode = 2
 
 [node name="MainPanel" parent="CanvasLayer/Control/MainContainer/SplitContainer" instance=ExtResource("3_f83o4")]

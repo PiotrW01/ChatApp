@@ -1,10 +1,11 @@
+class_name AuthInput
 extends Control
 
-@onready var disconnect = $disconnect
-@onready var login = $LoginInput/login
-@onready var username_input = $LoginInput/username_input
-@onready var connect = $ConnectionInput/connect
-@onready var ip_input = $ConnectionInput/ip_input
+@onready var connect_button = $ConnectionInput/ConnectButton
+@onready var ip_input = $ConnectionInput/IpInput
+@onready var login_button = $LoginInput/LoginButton
+@onready var username_input = $LoginInput/UsernameInput
+@onready var disconnect_button = $DisconnectButton
 var URL = ""
 
 func _ready():
@@ -23,17 +24,10 @@ func _input(event):
 		if focused and focused is Control:
 			if not focused.get_global_rect().has_point(get_viewport().get_mouse_position()):
 				focused.release_focus()
-	elif event is InputEventKey and event.pressed:
-		var focused = get_viewport().gui_get_focus_owner()
-		if not focused:
-			Client.INSTANCE.text_input.grab_focus()
 
 func _on_disconnect_button_down():
 	Client.INSTANCE.socket.close()
-	Client.INSTANCE.clear_messages()
-	Client.INSTANCE.clear_users()
 	_reset_buttons()
-
 
 func _on_login_button_down():
 	var username = username_input.text.strip_edges()
@@ -42,8 +36,8 @@ func _on_login_button_down():
 	Client.INSTANCE.username = username
 	username_input.text = ""
 	var packet = {
-		"type": Client.INSTANCE.DataType.LOGIN,
-		"username": Client.INSTANCE.username,
+		"type": Client.DataType.LOGIN,
+		"username": username,
 	}
 	if Client.INSTANCE.socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		Client.INSTANCE.socket.send_text(JSON.stringify(packet))
@@ -63,7 +57,7 @@ func _on_connect_button_down():
 	Client.INSTANCE.set_process(true)
 	
 	ip_input.editable = false
-	connect.disabled = true
+	connect_button.disabled = true
 	
 	var start_time = Time.get_ticks_msec()
 	while(true):
@@ -72,7 +66,7 @@ func _on_connect_button_down():
 			$ConnectionInput.visible = false
 			
 			$LoginInput.visible = true
-			login.disabled = false
+			login_button.disabled = false
 			username_input.editable = true
 			username_input.call_deferred("grab_focus")
 			return
@@ -83,17 +77,17 @@ func _on_connect_button_down():
 
 
 
-func _on_logged_in():
+func _on_logged_in(data):
 	$LoginInput.visible = false
-	disconnect.visible = true
-	disconnect.disabled = false
+	disconnect_button.visible = true
+	disconnect_button.disabled = false
 
 
 func _reset_buttons():
-	disconnect.visible = false
+	disconnect_button.visible = false
 	$LoginInput.visible = false
 	$ConnectionInput.visible = true
-	connect.disabled = false
+	connect_button.disabled = false
 	ip_input.editable = true
 	ip_input.call_deferred("grab_focus")
 
@@ -106,6 +100,7 @@ func _is_username_valid(username):
 	if username.length() > 16:
 		push_warning("Username too long.")
 		return false
+	@warning_ignore("shadowed_global_identifier")
 	for char in ascii_username:
 		if char < 97 or char > 122:
 			push_warning("Username contains spaces or invalid characters.")
