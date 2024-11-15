@@ -55,8 +55,10 @@ function broadcastUserDisconnected(username){
 }
 
 function connectToChat(ws, data){
+    if(usersMap.has(ws)) return;
+
     for (const user of usersMap.values()) {
-        if(user.username == data.username){
+        if(user.username.toLowerCase() == data.username.toLowerCase()){
             console.log("Username taken!");
             return;
         }
@@ -112,7 +114,7 @@ function runServer(){
             data = JSON.parse(decoder.decode(data));
             switch(data.type){
                 case DataType.MESSAGE:
-                    if(verifyUserID(ws, data.session_id));
+                    if(verifyUserID(ws, data.session_id) && data.message.length > 0);
                     broadcastMessage(usersMap.get(ws).username, data.message);
                     break;
                 case DataType.LOGIN:
