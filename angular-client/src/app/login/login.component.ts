@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
       }
       else if(data.type == DataType.DISCONNECTED){
         this.visible = true;
+        this.isDisabled = true;
       }
     })
   }

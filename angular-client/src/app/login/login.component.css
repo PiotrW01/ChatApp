@@ -1,0 +1,26 @@
+.login-container{
+    display:flex;
+    height: 40px;
+}
+
+input{
+    max-width: 100px;
+}
+
+.spinner-container{
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+.fit{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.main{
+    height: 61px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}

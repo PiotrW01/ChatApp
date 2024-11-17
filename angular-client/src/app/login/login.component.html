@@ -1,4 +1,9 @@
-<div *ngIf="visible" class="login-container">
-    <input [(ngModel)]="newUsername" (keydown.enter)="login()" placeholder="Username..."/>
-    <button (click)="login()" [disabled]="isDisabled">Login</button>    
+<div class="main">
+        <div *ngIf="visible" class="login-container">
+            <input [(ngModel)]="newUsername" (keydown.enter)="login()" placeholder="Username..."/>
+            <button (click)="login()" [disabled]="isDisabled">Login</button>
+            <div class="spinner-container">
+                <img src="spinner.svg" class="fit" *ngIf="isDisabled">  
+            </div>
+        </div>
 </div>

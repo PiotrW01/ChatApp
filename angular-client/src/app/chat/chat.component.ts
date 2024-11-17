@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked} from '@angu
 import { MessageComponent } from '../message/message.component';
 import { WsClientService } from '../ws-client.service';
 import { DataType } from '../data-type';
-import { NgFor } from '@angular/common';
+import { DOCUMENT, NgFor } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
@@ -14,6 +14,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 })
 export class ChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('chatMessages') chatMessages!: ElementRef;
+  @ViewChild('chatInput') chatInput!: ElementRef;
   messages: MessageComponent[] = [];
   newMessage: string = '';
   username: string = 'user';
@@ -22,10 +23,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit(): void {
-    this.wsClientService.connect("ws://localhost:3000")
+    this.wsClientService.connect();
     this.wsClientService.messages$.subscribe((data) => {
       if(data.type == DataType.MESSAGE){
         this.createMessage(data.username, data.message);
+      }
+    })
+    addEventListener('keydown', () => {
+      // if nothing is focused, focus chat input
+      if(document.activeElement?.isEqualNode(document.body)){
+        this.chatInput.nativeElement.focus();
       }
     })
   }
