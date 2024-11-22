@@ -10,6 +10,7 @@ var URL = ""
 
 func _ready():
 	_reset_buttons()
+	ip_input.text = "globcord.glitch.me"
 	Client.INSTANCE.disconnected.connect(_on_disconnect_button_down)
 	Client.INSTANCE.logged_in.connect(_on_logged_in)
 
@@ -47,7 +48,6 @@ func _on_connect_button_down():
 	if Client.INSTANCE.socket.get_ready_state() != WebSocketPeer.STATE_CLOSED:
 		return
 	var ip: String = ip_input.text
-	ip_input.text = ""
 	if ip.ends_with("localhost") or ip == "":
 		URL = "ws://localhost:3000"
 	else:
@@ -63,8 +63,8 @@ func _on_connect_button_down():
 	while(true):
 		await get_tree().process_frame
 		if Client.INSTANCE.socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
+			ip_input.text = ""
 			$ConnectionInput.visible = false
-			
 			$LoginInput.visible = true
 			login_button.disabled = false
 			username_input.editable = true

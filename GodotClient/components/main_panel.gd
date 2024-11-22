@@ -7,9 +7,10 @@ static var messageScene = load("res://components/message.tscn")
 @export var text_input: LineEdit
 
 func _ready():
-	Client.INSTANCE.disconnected.connect(clear_messages)
-	Client.INSTANCE.logged_in.connect(_on_login)
-	Client.INSTANCE.message_received.connect(add_message)
+	if Client.INSTANCE:
+		Client.INSTANCE.disconnected.connect(clear_messages)
+		Client.INSTANCE.logged_in.connect(_on_login)
+		Client.INSTANCE.message_received.connect(add_message)
 	
 	
 func _input(event):

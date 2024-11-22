@@ -21,7 +21,6 @@ static var INSTANCE
 @export var side_panel: SidePanel
 @export var main_panel: MainPanel
 
-
 signal connected
 signal disconnected
 signal logged_in(data)
