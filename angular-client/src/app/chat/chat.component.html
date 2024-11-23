@@ -1,10 +1,17 @@
 <div class="chat-window">
     <div class="chat-messages" #chatMessages>
-        <div *ngFor="let msg of messages" class="chat-message">
-            <strong>{{ msg.username }}:</strong> 
-            <div class="message-content">
-                {{ msg.message }}
-            </div> 
+        <div *ngFor="let container of messages" class="chat-container">
+            <strong style="cursor:default">{{ container.username }}:</strong>
+            <div *ngFor="let msg of container.messages" class="chat-message">
+                @if(!msg.isEmoji){
+                    <span  class="message-content">
+                        {{ msg.message }}
+                    </span>       
+                }
+                @else {
+                    <img src="https://cdn.glitch.global/8005e491-edd8-42b3-a76b-610847e30567/{{ msg.message }}.webp" class="chat-img">
+                } 
+            </div>
         </div>
     </div>
     <div class="chat-input">

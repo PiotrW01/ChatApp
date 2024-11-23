@@ -4,6 +4,7 @@ import { WsClientService } from '../ws-client.service';
 import { DataType } from '../data-type';
 import { DOCUMENT, NgFor } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
+import { MessageContainer } from '../message/message-container.component';
 
 @Component({
   selector: 'app-chat',
@@ -15,7 +16,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 export class ChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('chatMessages') chatMessages!: ElementRef;
   @ViewChild('chatInput') chatInput!: ElementRef;
-  messages: MessageComponent[] = [];
+  messages: MessageContainer[] = [];
   newMessage: string = '';
   username: string = 'user';
   
@@ -56,11 +57,45 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   createMessage(username: string, text: string) {
-    const message: MessageComponent = {
+    let msg = text.split(" ");
+    let temp_text = "";
+    // create msg container
+
+    const messageContainer: MessageContainer = {
       username: username,
-      message: text,
+      messages: [],
     }
-    this.messages.push(message);
+
+    msg.forEach((word) => {
+      if(word.startsWith(":") && word.endsWith(":")){
+        if(temp_text.length > 0){
+          temp_text.trimStart();
+          const message: MessageComponent = {
+            message: temp_text,
+            isEmoji: false,
+          }
+          messageContainer.messages.push(message);
+          temp_text = "";
+        }
+        const emoji = word.substring(1, word.length - 1)
+        const message: MessageComponent = {
+          message: emoji,
+          isEmoji: true,
+        }
+        messageContainer.messages.push(message);
+      } else {
+        temp_text += " " + word;
+      }
+    })
+    if(temp_text.length > 0) {
+      temp_text.trimStart();
+      const message: MessageComponent = {
+        message: temp_text,
+        isEmoji: false,
+      }
+      messageContainer.messages.push(message);
+    }
+    this.messages.push(messageContainer);
   }
 
 }

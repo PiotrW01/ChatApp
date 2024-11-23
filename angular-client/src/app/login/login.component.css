@@ -1,6 +1,7 @@
 .login-container{
     display:flex;
     height: 40px;
+    gap: 1px;
 }
 
 input{

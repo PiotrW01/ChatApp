@@ -6,4 +6,13 @@ html, body {
 
 input, button {
     font-size: large;
+    background-color: #383A40;
+}
+
+input {
+    color: #C0C0C0;
+}
+
+button {
+    color: black;
 }
