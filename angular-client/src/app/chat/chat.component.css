@@ -4,6 +4,7 @@
     border-left: 1px solid #1F2023;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
   }
   
   .chat-messages {
@@ -33,6 +34,7 @@
       align-items: start;
     }
   }
+
 
   .chat-message {
     display: flex;

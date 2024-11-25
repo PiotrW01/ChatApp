@@ -8,3 +8,9 @@
     background-color: #4e4e4e; /* Example background color */
     overflow: auto; /* Ensure scrollable content if needed */
 }
+
+@media only screen and (max-width: 580px) {
+    .main {
+        grid-template-columns: 0 1fr; /* 250px for the left panel, remaining space for the main panel */
+    }
+  }

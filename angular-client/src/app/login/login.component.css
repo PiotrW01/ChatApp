@@ -25,3 +25,15 @@ input{
     align-items: center;
     justify-content: center;
 }
+
+:host{
+    position: relative;
+}
+
+@media only screen and (max-width: 580px) {
+    .main {
+        position: absolute;
+        bottom: 10vh;
+        transform: translate(50%);
+    }
+  }
