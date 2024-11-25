@@ -29,6 +29,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       if(data.type == DataType.MESSAGE){
         this.createMessage(data.username, data.message);
       }
+      else if(data.type == DataType.LOGIN){
+        // @ts-ignore
+        data.messages.forEach(msg => {
+          this.createMessage(msg.username, msg.message);
+        });
+      }
     })
     addEventListener('keydown', () => {
       // if nothing is focused, focus chat input
